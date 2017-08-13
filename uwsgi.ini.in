@@ -1,0 +1,15 @@
+[uwsgi]
+chdir=$basedir
+module=$projectname.wsgi:application
+master=True
+processes=3
+socket=$djangosocketfile
+chmod-socket=664
+uid=$nginxuser
+gid=$nginxgroup
+die-on-term=true
+pidfile=$djangopidfile
+vacuum=True
+max-requests=5000
+daemonize=$djangologfile
+env = LANG='en_US.UTF-8' DJANGO_SETTINGS_MODULE=$projectname.settings

@@ -1,0 +1,17 @@
+#!/bin/bash
+# start.sh
+# 
+# Copyright (C) 2016-2017 Angelo Falchetti
+# All rights reserved.
+# 
+# NOTE /tmp is cleared on reboot, so anything that would be interesting
+#      to inspect upon failure should be stored in $HOME/tmp instead
+#      (as well as anything with specific permission requirements, since
+#      /tmp has special treatment with extra permission bits and namespaces,
+#      e.g. the www-data server user may not be able to see what the user
+#      writes to /tmp)
+
+if [ -f "$djangopidfile" ]
+then
+	sudo kill $(cat "$djangopidfile")
+fi

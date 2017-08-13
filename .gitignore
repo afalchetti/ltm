@@ -1,0 +1,14 @@
+*.pyc
+*/__pycache__/*
+ltm/token/*
+media/*
+static/*
+ssl/*
+db/*
+*/assets/*
+
+nginx.conf
+start.sh
+stop.sh
+ltm/settings.py
+uwsgi.ini

@@ -8,5 +8,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-	url("^$", views.landing, name="landing"),
+	url("^$", views.userlist, name="userlist"),
+	url("^(?P<username>[\w.@+-]+)$", views.userlist, name="userlist"),
 ]

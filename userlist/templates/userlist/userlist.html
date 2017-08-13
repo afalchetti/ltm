@@ -1,0 +1,63 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<title>Tiny Yellow Pages</title>
+	<link rel="stylesheet" href="{% static 'userlist/style.css' %}?v=1.6" />
+	<link rel="icon" type="image/png" href="{% static 'userlist/favicon.png' %}" />
+</head>
+
+<body>
+<header>
+	<div class="tophead">
+		<img class="logo" src="{% static 'userlist/img/logo.png' %}" width="380" height="157" alt="UserList logo"/>
+		<h1>Tiny Yellow Pages</h1>
+	</div>
+</header>
+<section id="content">
+<section id="userlist">
+	<ul>
+{% for user in users %}
+		<li><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
+{% endfor %}
+	</ul>
+</section>
+{% if landing %}
+<section id="welcome">
+	<h2>Welcome to the Networking Directory</h2>
+	<p>These are all the people I know ;)</p>
+</section>
+{% elif not found %}
+<section id="welcome">
+	<h2>User not found</h2>
+	<p>I don't find that user in my database, are you sure you spelled their username correctly? Try
+	looking them up in the list on the side :S</p>
+</section>
+{% else %}
+<section id="details">
+	<h2>{{ fullname }}</h2>
+	<div class="infotable">
+		<div class="infoentry">
+			<p>Address:</p>
+			<p>{{ address }}</p>
+		</div>
+		<div class="infoentry">
+			<p>Phone Number:</p>
+			<p>{{ phone }}</p>
+		</div>
+		<div class="infoentry">
+			<p>E-mail:</p>
+			<p>{{ email }}</p>
+		</div>
+	</div>
+</section>
+{% endif %}
+</section>
+<footer>
+	<div id="details">
+		<p>by Angelo Falchetti</p>
+	</div>
+</footer>
+</body>
+</html>

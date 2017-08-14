@@ -1,0 +1,137 @@
+html
+{
+	height: 100%;
+	overflow-y: scroll;
+}
+
+body {
+	height: 100%;
+	min-height: 100%;
+	background: rgb(250, 250, 250) url("/static/userlist/img/bg.jpg") no-repeat center fixed;
+	background-size: cover;
+	color: rgb(78, 78, 78);
+	font-family: "Open Sans", "Trebuchet MS", "Droid Sans", "Helvetica", sans-serif;
+	font-size: 12pt;
+	text-align: center;
+	margin: 0;
+}
+
+header {
+	background: rgba(255, 255, 255, 0.5);
+	margin: 0;
+	padding: 0;
+	border-bottom: solid thin rgba(255, 255, 255, 0.9);
+}
+
+header .logo {
+	vertical-align: middle;
+	height: 6em;
+	margin: 1em;
+}
+
+header h1 {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+a, a:visited {
+	color: rgb(120, 120, 120);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a:hover
+{
+	color: rgb(90, 95, 86);
+	text-decoration: none;
+}
+
+ul li {
+	list-style: none;
+}
+
+.selflink {
+	color: rgb(14, 15, 18);
+	font-weight: bold;
+}
+
+img:-moz-broken
+{
+	-moz-force-broken-image-icon: 1;
+}
+
+#content_wrapper {
+	display: table;
+	text-align: left;
+	box-sizing: border-box;
+	padding: 0:
+	width: 100%;
+}
+
+#content {
+	display: table-row;
+}
+
+#sidebar {
+	display: table-cell;
+	background: rgba(255, 255, 255, 0.5);
+	padding: 2em;
+	vertical-align: top;
+	text-align: left;
+	width: 7em;
+	border-right: solid thin rgba(255, 255, 255, 0.6);
+}
+
+#sidebar form {
+	text-align: center;
+}
+
+#sidebar form > input {
+	margin: 0.2em;
+}
+
+#userlist {
+	padding: 0;
+	margin: 0.3em;
+	max-height: 20em;
+	overflow-y: scroll;
+}
+
+#welcome, #details, #notfound {
+	display: table-cell;
+	padding: 2em;
+	vertical-align: top;
+	text-align: center;
+	width: 100%;
+}
+
+.infotable {
+	display: inline-table;
+}
+
+.infoentry {
+	display: table-row;
+}
+
+.infoentry > * {
+	display: table-cell;
+	padding: 0.4em;
+	text-align: center;
+}
+
+.infoentry > *:first-child {
+	text-align: right;
+}
+
+footer {
+	width: 100%;
+	background: rgba(255, 255, 255, 0.7);
+	border-top: solid thin rgba(255, 255, 255, 0.9);
+	text-align: right;
+}
+
+footer > p {
+	display: block;
+	padding: 2em;
+	margin: 0;
+}

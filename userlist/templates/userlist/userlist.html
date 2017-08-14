@@ -10,18 +10,17 @@
 
 <body>
 <header>
-	<div class="tophead">
-		<img class="logo" src="{% static 'userlist/img/logo.png' %}" width="380" height="157" alt="UserList logo"/>
-		<h1>Tiny Yellow Pages</h1>
-	</div>
+	<img class="logo" src="{% static 'userlist/img/logo.png' %}" alt="UserList logo"/>
+	<h1>Tiny Yellow Pages</h1>
 </header>
+<section id="content_wrapper">
 <section id="content">
-<section id="userlist">
+<section id="sidebar">
 	<form action="{{ request.path }}" method="get">
 		<input id="needle" name="needle" type="text" />
 		<input id="search" name="search" type="submit" value="Search" />
 	</form>
-	<ul>
+	<ul id="userlist">
 {% for user in users %}
 		<li><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
 {% endfor %}
@@ -33,7 +32,7 @@
 	<p>These are all the people I know ;)</p>
 </section>
 {% elif not found %}
-<section id="welcome">
+<section id="notfound">
 	<h2>User not found</h2>
 	<p>I don't find that user in my database, are you sure you spelled their username correctly? Try
 	looking them up in the list on the side :S</p>
@@ -58,10 +57,9 @@
 </section>
 {% endif %}
 </section>
+</section>
 <footer>
-	<div id="details">
-		<p>by Angelo Falchetti</p>
-	</div>
+	<p>by Angelo Falchetti</p>
 </footer>
 </body>
 </html>

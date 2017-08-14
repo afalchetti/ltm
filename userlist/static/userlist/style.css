@@ -78,7 +78,7 @@ img:-moz-broken
 	padding: 2em;
 	vertical-align: top;
 	text-align: left;
-	width: 7em;
+	min-width: 13em;
 	border-right: solid thin rgba(255, 255, 255, 0.6);
 }
 
@@ -94,7 +94,7 @@ img:-moz-broken
 	padding: 0;
 	margin: 0.3em;
 	max-height: 20em;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #welcome, #details, #notfound {

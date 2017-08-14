@@ -17,6 +17,10 @@
 </header>
 <section id="content">
 <section id="userlist">
+	<form action="{{ request.path }}" method="get">
+		<input id="needle" name="needle" type="text" />
+		<input id="search" name="search" type="submit" value="Search" />
+	</form>
 	<ul>
 {% for user in users %}
 		<li><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>

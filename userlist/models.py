@@ -17,5 +17,12 @@ class User(AbstractUser):
 	#       https://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/
 	#       and similar posts
 	
-	address = models.CharField("address", max_length=256, null=True, blank=True)
-	phone   = models.CharField("phone",   max_length=64,  null=True, blank=True)
+	# fullname is included as a cache to speed up searching
+	
+	fullname = models.CharField("fullname", max_length=64,  null=True, blank=True)
+	address  = models.CharField("address",  max_length=256, null=True, blank=True)
+	phone    = models.CharField("phone",    max_length=64,  null=True, blank=True)
+	
+	def save(self, *args, **kwargs):
+		self.fullname = "{} {}".format(self.first_name, self.last_name)
+		super().save(*args, **kwargs)

@@ -46,10 +46,17 @@ def get_userlist(needle):
 		# per user (e.g. a biography), some preprocessing should be done. Lucene
 		# (through ElasticSearch) would be a good tool for such a job
 		
-		filtered = AuthUser.objects.filter(Q(fullname__icontains=needle) |
-		                                   Q(email__icontains=needle) |
-		                                   Q(address__icontains=needle) |
-		                                   Q(phone__icontains=needle))
+		words = needle.split()
+		
+		filt = Q()
+		
+		for word in words:
+			filt &= (Q(fullname__icontains=word) |
+		            Q(email__icontains=word) |
+		            Q(address__icontains=word) |
+		            Q(phone__icontains=word))
+		
+		filtered = AuthUser.objects.filter(filt)
 	
 	for user in filtered:
 		users.append({"fullname": user.get_full_name(),

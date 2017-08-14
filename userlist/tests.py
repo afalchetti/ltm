@@ -10,6 +10,7 @@ from django.urls import reverse
 from ltm import settings
 
 from unittest import TestCase
+import json
 
 from .models import User
 from .views import get_userinfo, get_userlist, userlist, maxlistlen, searchclean, validate_search
@@ -233,6 +234,36 @@ class UserlistTestCase(djTestCase):
 		self.assertEqual(1, len(userlist))
 		self.assertIn("poe", usernames)
 	
+	def test_userlist_offset_all(self):
+		"""Check the offset works when returning the entire list."""
+		
+		userlist  = get_userlist(None)
+		userlist2 = get_userlist(None, offset=2)
+		
+		# this is not really interesting to assert, but if it is
+		# False, the next for would not run any iterations, so
+		# the test would succeed trivially without actually testing
+		# the intended behaviour
+		self.assertGreaterEqual(len(userlist), 3)
+		
+		for i in range(2, len(userlist)):
+			self.assertEqual(userlist[i], userlist2[i - 2])
+	
+	def test_userlist_offset_filtered(self):
+		"""Check the offset works when returning a search result."""
+		
+		userlist  = get_userlist("street")
+		userlist2 = get_userlist("street", offset=2)
+		
+		# this is not really interesting to assert, but if it is
+		# False, the next for would not run any iterations, so
+		# the test would succeed trivially without actually testing
+		# the intended behaviour
+		self.assertGreaterEqual(len(userlist), 3)
+		
+		for i in range(2, len(userlist)):
+			self.assertEqual(userlist[i], userlist2[i - 2])
+	
 	def test_search_validation_simple(self):
 		"""Test that a simple search string validates correctly."""
 		
@@ -347,6 +378,75 @@ class UserlistViewTestCase(djTestCase):
 		
 		self.assertIn("users", response.context)
 		self.assertEqual(3,    len(response.context["users"]))
+
+class UserlistAPITestCase(djTestCase):
+	"""Tests for the Userlist JSON API."""
+	
+	def setUp(self):
+		"""Fill database with fake users and create a mock client."""
+		
+		createusers()
+		self.client = Client()
+	
+	def test_userinfo_details(self):
+		"""If a user exists, the API should return their details."""
+		
+		response = self.client.get(reverse("api_userinfo", args=["poe"]))
+		
+		self.assertEqual(200, response.status_code)
+		data = json.loads(response.content.decode("utf8"))
+		
+		self.assertIn("valid",   data)
+		self.assertEqual(True,   data["valid"])
+		
+		self.assertIn("fullname", data)
+		self.assertIn("username", data)
+		self.assertIn("email",    data)
+		self.assertIn("phone",    data)
+		self.assertIn("address",  data)
+		self.assertEqual(True,    data["found"])
+	
+	def test_userinfo_notfound(self):
+		"""If an invalid user has been specified, return an not-found flag."""
+		
+		response = self.client.get(reverse("api_userinfo", args=["thisguydoesnotexist"]))
+		
+		self.assertEqual(200, response.status_code)
+		data = json.loads(response.content.decode("utf8"))
+		
+		self.assertIn("valid",   data)
+		self.assertEqual(True,   data["valid"])
+		
+		self.assertIn("found",  data)
+		self.assertEqual(False, data["found"])
+	
+	def test_userlist_search_none(self):
+		"""If a search didn't find anything, the user list should be empty."""
+		
+		response = self.client.get(reverse("api_userlist"), {"needle": "veryhardtofindthisanywhere"})
+		
+		self.assertEqual(200, response.status_code)
+		data = json.loads(response.content.decode("utf8"))
+		
+		self.assertIn("valid", data)
+		self.assertEqual(True, data["valid"])
+		
+		self.assertIn("users", data)
+		self.assertEqual(0,    len(data["users"]))
+	
+	def test_userlist_search_success(self):
+		"""If a search was successful, the user list should be populated."""
+		
+		response = self.client.get(reverse("api_userlist"), {"needle": "street"})
+		
+		self.assertEqual(200, response.status_code)
+		data = json.loads(response.content.decode("utf8"))
+		
+		self.assertIn("valid", data)
+		self.assertEqual(True, data["valid"])
+		
+		self.assertIn("users", data)
+		self.assertEqual(3,    len(data["users"]))
 
 class TokenTestCase(TestCase):
 	"""Tests for the credentials system."""

@@ -145,7 +145,7 @@ def api_userinfo(request, username):
 		info = get_userinfo(username)
 		info.update({"valid": True})
 		
-		return JsonResponse(get_userinfo(username))
+		return JsonResponse(info)
 	else:
 		return JsonResponse({"valid": False})
 

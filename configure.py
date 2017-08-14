@@ -46,7 +46,7 @@ def genfaketokens(tokendir):
 		               "password": "db-pass"}
 		
 		with open(mysqlfilename, "w") as mysqlfile:
-			json.dump(djangotoken, mysqlfile, indent=2, sort_keys=True)
+			json.dump(mysql_token, mysqlfile, indent=2, sort_keys=True)
 
 def get_allowedhosts(servername):
 	"""Parse the server name list into an appropriate python list,

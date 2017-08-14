@@ -101,11 +101,11 @@ if PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': MYSQL_TOKEN.db,
-            'HOST': MYSQL_TOKEN.host,
-            'PORT': MYSQL_TOKEN.port,
-            'USER': MYSQL_TOKEN.user,
-            'PASSWORD': MYSQL_TOKEN.password,
+            'NAME': MYSQL_TOKEN["db"],
+            'HOST': MYSQL_TOKEN["host"],
+            'PORT': MYSQL_TOKEN["port"],
+            'USER': MYSQL_TOKEN["user"],
+            'PASSWORD': MYSQL_TOKEN["password"],
         }
     }
 else:

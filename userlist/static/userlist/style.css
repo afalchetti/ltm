@@ -32,6 +32,7 @@ header .logo {
 header h1 {
 	display: inline-block;
 	vertical-align: middle;
+	font-size: 2em;
 }
 
 a, a:visited {
@@ -80,6 +81,7 @@ img:-moz-broken
 	text-align: left;
 	min-width: 13em;
 	border-right: solid thin rgba(255, 255, 255, 0.6);
+	box-sizing: border-box;
 }
 
 #sidebar form {
@@ -95,6 +97,7 @@ img:-moz-broken
 	margin: 0.3em;
 	max-height: 20em;
 	overflow-y: auto;
+	box-sizing: border-box;
 }
 
 #truncated {
@@ -107,6 +110,42 @@ img:-moz-broken
 	vertical-align: top;
 	text-align: center;
 	width: 100%;
+	box-sizing: border-box;
+}
+
+@media (max-width: 650px) {
+	#content_wrapper {
+		display: block;
+		width: 100%;
+	}
+	
+	#content {
+		display: flex;
+		flex-direction: column;
+	}
+	
+	#sidebar {
+		display: block;
+		width: 100%;
+		text-align: center;
+		order: 2;
+	}
+	
+	#welcome, #details, #notfound {
+		display: block;
+		width: 100%;
+		padding: 0.2em;
+		order: 1;
+	}
+	
+	header .logo {
+		height: 3em;
+		margin: 0.5em;
+	}
+	
+	header h1 {
+		font-size: 1.8em;
+	}
 }
 
 .infotable {

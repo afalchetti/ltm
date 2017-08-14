@@ -12,8 +12,7 @@ from ltm import settings
 from unittest import TestCase
 
 from .models import User
-from .views import get_userinfo, get_userlist, userlist, maxlistlen, searchclean, validate
-
+from .views import get_userinfo, get_userlist, userlist, maxlistlen, searchclean, validate_search
 
 def createusers():
 	"""Create some fake users."""
@@ -237,21 +236,21 @@ class UserlistTestCase(djTestCase):
 	def test_search_validation_simple(self):
 		"""Test that a simple search string validates correctly."""
 		
-		self.assertTrue(validate("Albert Susskind"))
+		self.assertTrue(validate_search("Albert Susskind"))
 	
 	def test_search_validation_accents(self):
 		"""Special chars such as accents should be ok."""
 		
-		self.assertTrue(validate("Älbèrt Sûsśkïnd"))
+		self.assertTrue(validate_search("Älbèrt Sûsśkïnd"))
 	
 	def test_search_validation_toolong(self):
 		"""Long search string could bog down the system since they
 		introduce arbitrarily long server execution (when creating
 		the database query)."""
 		
-		self.assertFalse(validate("Albert Thomas Robert Paddington Susskind del Río from"
-		                          "Edinburgh, the royal Sir in the name of the Queen "
-		                          "and all her people"))
+		self.assertFalse(validate_search("Albert Thomas Robert Paddington Susskind del Río from"
+		                                 "Edinburgh, the royal Sir in the name of the Queen "
+		                                 "and all her people"))
 	
 	def test_userlist_clean_none(self):
 		"""None should be left alone."""

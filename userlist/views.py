@@ -11,8 +11,9 @@ from django.db.models import Q
 
 import string
 
-maxlistlen   = 100
-maxsearchlen = 60
+maxlistlen     = 100
+maxsearchlen   = 60
+maxusernamelen = 150
 
 AuthUser = get_user_model()
 
@@ -33,12 +34,13 @@ def get_userinfo(username):
 	except AuthUser.DoesNotExist:
 		return {"found": False}
 
-def get_userlist(needle=None):
+def get_userlist(needle=None, offset=0):
 	"""Get basic info about all the users (full name for displaying
 	and username for indexing).
 	
 	Arguments:
 		needle: string to search for in the info for each user.
+		offset: paging offset, skip this many users from the results.
 	"""
 	
 	users = []
@@ -49,7 +51,7 @@ def get_userlist(needle=None):
 		# comparing the array length is to the truncate length, i.e.
 		# if the returned value has maxlistlen + 1 elements, the last one
 		# will be removed and the list will be flagged as "truncated"
-		filtered = AuthUser.objects.all()[:maxlistlen + 1]
+		filtered = AuthUser.objects.all()[offset:(offset + maxlistlen + 1)]
 	else:
 		# this is a very simple search algorithm
 		# for serious applications with longer userlists and/or more information
@@ -66,7 +68,7 @@ def get_userlist(needle=None):
 		            Q(address__icontains=word) |
 		            Q(phone__icontains=word))
 		
-		filtered = AuthUser.objects.filter(filt)[:maxlistlen + 1]
+		filtered = AuthUser.objects.filter(filt)[offset:(offset + maxlistlen + 1)]
 	
 	for user in filtered:
 		users.append({"fullname": user.fullname,
@@ -74,7 +76,7 @@ def get_userlist(needle=None):
 	
 	return users
 
-def validate(needle):
+def validate_search(needle):
 	"""Validate the user search input.
 	
 	Besides checking it's not too long to bog down the system,
@@ -82,6 +84,19 @@ def validate(needle):
 	to consider people from different cultures."""
 	
 	return needle is None or len(needle) < maxsearchlen
+
+def validate_username(username):
+	"""Validates a username using the internal Django validator and
+	enforcing it is not None and a maximum length."""
+	
+	if username is None or len(username) > maxusernamelen:
+		return False
+	
+	try:
+		AuthUser.username_validator(username)
+		return True
+	except ValidationError:
+		return False
 
 def searchclean(needle):
 	"""Remove short words (one or two chars) and punctuation to
@@ -105,12 +120,14 @@ def userlist(request, username=None):
 	
 	if username is None:
 		context["landing"] = True
-	else:
+	elif validate_username(username):
 		context.update(get_userinfo(username))
+	else:
+		context["valid"] = False
 	
 	needle = request.GET.get("needle", None)
 	
-	if not validate(needle):
+	if not validate_search(needle):
 		context["valid"] = False
 		needle = None
 	
@@ -120,3 +137,36 @@ def userlist(request, username=None):
 	context["users"] = users[:maxlistlen]
 	
 	return render(request, "userlist/userlist.html", context)
+
+def api_userinfo(request, username):
+	"""JSON API for user information."""
+	
+	if validate_username(username):
+		info = get_userinfo(username)
+		info.update({"valid": True})
+		
+		return JsonResponse(get_userinfo(username))
+	else:
+		return JsonResponse({"valid": False})
+
+def api_userlist(request):
+	"""JSON API for user search."""
+	
+	needle = request.GET.get("needle", None)
+	offset = request.GET.get("offset", 0)
+	
+	if not validate_search(needle):
+		return JsonResponse({"valid": False})
+	
+	try:
+		offset = int(offset)
+	except ValueError:
+		offset = 0
+	
+	users = get_userlist(searchclean(needle), offset)
+	
+	return JsonResponse({
+		"valid": True,
+		"truncated": len(users) > maxlistlen,
+		"users": users[:maxlistlen],
+	})

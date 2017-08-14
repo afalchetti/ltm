@@ -9,18 +9,21 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-maxlistlen = 100
+import string
+
+maxlistlen   = 100
+maxsearchlen = 60
 
 AuthUser = get_user_model()
 
-def get_user_info(username):
+def get_userinfo(username):
 	"""Get the interesting pieces of information of a user."""
 	try:
 		user = AuthUser.objects.get(username=username)
 		
 		return {
 			"username": user.username,
-			"fullname": user.get_full_name(),
+			"fullname": user.fullname,
 			"email":    user.email,
 			"phone":    user.phone,
 			"address":  user.address,
@@ -30,7 +33,7 @@ def get_user_info(username):
 	except AuthUser.DoesNotExist:
 		return {"found": False}
 
-def get_userlist(needle):
+def get_userlist(needle=None):
 	"""Get basic info about all the users (full name for displaying
 	and username for indexing).
 	
@@ -66,25 +69,52 @@ def get_userlist(needle):
 		filtered = AuthUser.objects.filter(filt)[:maxlistlen + 1]
 	
 	for user in filtered:
-		users.append({"fullname": user.get_full_name(),
+		users.append({"fullname": user.fullname,
 		              "username": user.username})
 	
 	return users
+
+def validate(needle):
+	"""Validate the user search input.
+	
+	Besides checking it's not too long to bog down the system,
+	any utf-8 characters is valid (punctuation will be stripped),
+	to consider people from different cultures."""
+	
+	return needle is None or len(needle) < maxsearchlen
+
+def searchclean(needle):
+	"""Remove short words (one or two chars) and punctuation to
+	improve result quality and speed."""
+	
+	if needle is None:
+		return None
+	
+	words = needle.split()
+	nopunctuation = str.maketrans("", "", string.punctuation)
+	
+	return " ".join(word.translate(nopunctuation) for word in words if len(word) > 2)
 
 def userlist(request, username=None):
 	"""One page web application showing a list of users and their details."""
 	
 	context = {
 		"landing": False,
+		"valid": True,
 	}
 	
 	if username is None:
 		context["landing"] = True
 	else:
-		context.update(get_user_info(username))
+		context.update(get_userinfo(username))
 	
 	needle = request.GET.get("needle", None)
-	users  = get_userlist(needle)
+	
+	if not validate(needle):
+		context["valid"] = False
+		needle = None
+	
+	users  = get_userlist(searchclean(needle))
 	
 	context["truncated"] = len(users) > maxlistlen
 	context["users"] = users[:maxlistlen]

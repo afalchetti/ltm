@@ -24,5 +24,14 @@ class User(AbstractUser):
 	phone    = models.CharField("phone",    max_length=64,  null=True, blank=True)
 	
 	def save(self, *args, **kwargs):
-		self.fullname = "{} {}".format(self.first_name, self.last_name)
+		if len(self.first_name) == 0 and len(self.last_name) == 0:
+			raise ValueError("The user must have some formal name")
+		
+		if len(self.first_name) > 0 and len(self.last_name) > 0:
+			self.fullname = "{} {}".format(self.first_name, self.last_name)
+		elif len(self.first_name) > 0:
+			self.fullname = self.first_name
+		else:
+			self.fullname = self.last_name
+		
 		super().save(*args, **kwargs)

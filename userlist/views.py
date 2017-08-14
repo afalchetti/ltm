@@ -9,6 +9,8 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
+maxlistlen = 100
+
 AuthUser = get_user_model()
 
 def get_user_info(username):
@@ -39,7 +41,12 @@ def get_userlist(needle):
 	users = []
 	
 	if needle is None:
-		filtered = AuthUser.objects.all()
+		# include one extra element (if possible) so it's easy
+		# to check for "truncated lists" from the outside by just
+		# comparing the array length is to the truncate length, i.e.
+		# if the returned value has maxlistlen + 1 elements, the last one
+		# will be removed and the list will be flagged as "truncated"
+		filtered = AuthUser.objects.all()[:maxlistlen + 1]
 	else:
 		# this is a very simple search algorithm
 		# for serious applications with longer userlists and/or more information
@@ -56,7 +63,7 @@ def get_userlist(needle):
 		            Q(address__icontains=word) |
 		            Q(phone__icontains=word))
 		
-		filtered = AuthUser.objects.filter(filt)
+		filtered = AuthUser.objects.filter(filt)[:maxlistlen + 1]
 	
 	for user in filtered:
 		users.append({"fullname": user.get_full_name(),
@@ -76,7 +83,10 @@ def userlist(request, username=None):
 	else:
 		context.update(get_user_info(username))
 	
-	needle           = request.GET.get("needle", None)
-	context["users"] = get_userlist(needle)
+	needle = request.GET.get("needle", None)
+	users  = get_userlist(needle)
+	
+	context["truncated"] = len(users) > maxlistlen
+	context["users"] = users[:maxlistlen]
 	
 	return render(request, "userlist/userlist.html", context)

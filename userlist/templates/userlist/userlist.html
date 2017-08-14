@@ -24,6 +24,9 @@
 {% for user in users %}
 		<li><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
 {% endfor %}
+{% if truncated %}
+		<li id="truncated">Truncated list, you should search for a more specific user</li>
+{% endif %}
 	</ul>
 </section>
 {% if landing %}

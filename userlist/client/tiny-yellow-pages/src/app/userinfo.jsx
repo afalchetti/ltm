@@ -1,5 +1,4 @@
 import React from "react";
-import "whatwg-fetch";
 
 class UserInfo extends React.Component
 {

@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import "whatwg-fetch";
 import UserInfo from './userinfo.jsx';
 import UserList from './userlist.jsx';
 
@@ -35,17 +36,18 @@ function get_query()
 	return query;
 }
 
-const details  = document.getElementById("details_wrapper");
+const details = document.getElementById("details_wrapper");
+
 
 // landing page or error page
-const nodetails = $("#details", details).empty();
+const nodetails = $("#details", details).toArray().length == 0;
 
 const fullname = $("#fullname", details).text();
 const phone    = $("#phone",    details).text();
 const email    = $("#email",    details).text();
 const address  = get_paragraphs($("#address", details));
 
-const userlist  = document.getElementById("userlist");
+const userlist  = document.getElementById("userlist_wrapper");
 const userlinks = $(".userlink > a", userlist);
 
 const listdata = userlinks.map(function() {
@@ -63,16 +65,20 @@ const truncated = $("#truncated", userlist).empty();
 
 function setuser(username)
 {
-	fetch("/api/user/"  + encodeURIComponent(username))
+	fetch("/api/user/"  + encodeURIComponent(username), {credentials: "same-origin"})
 		.then(function(response) {
 			return response.json();
 		}).then(function(json) {
-			/*if (json["valid"] !== true || !("fullname" in json)) {
+			if (json["valid"] !== true || !("fullname" in json)) {
 				throw new Error("Invalid response: " + json);
-			}*/
+			}
 			
-			render(<UserInfo fullname={json.fullname} address={json.address}
-			        phone={json.phone} email={json.email} />, details);
+			const address = ("address" in json) ? json.address : "";
+			const phone   = ("phone"   in json) ? json.phone   : "";
+			const email   = ("email"   in json) ? json.email   : "";
+			
+			render(<UserInfo fullname={json.fullname} address={address}
+			        phone={phone} email={email} />, details);
 		}).catch(function(ex) {
 			console.log("Couldn't get user data");
 			console.log(ex);
@@ -89,16 +95,17 @@ function search(needle)
 	
 	query += "offset=0";
 	
-	console.log(query);
-	fetch("/api/search?" + query)
+	fetch("/api/search?" + query, {credentials: "same-origin"})
 		.then(function(response) {
 			return response.json();
+			
 		}).then(function(json) {
 			if (json["valid"] !== true || !("users" in json)) {
 				throw new Error("Invalid response: " + json);
 			}
 			
 			rjs_userlist.replace(needle, json.users, json.truncated);
+			
 		}).catch(function(ex) {
 			console.log("Couldn't get user list");
 			console.log(ex);

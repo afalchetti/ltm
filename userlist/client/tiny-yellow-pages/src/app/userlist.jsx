@@ -7,9 +7,9 @@ class UserList extends React.Component
 	{
 		super(props);
 		
-		userlist  = ("userlist"  in props) ? props.userlist  : [];
-		needle    = ("needle"    in props) ? props.needle    : null;
-		truncated = ("truncated" in props) ? props.truncated : false;
+		const userlist  = ("userlist"  in props) ? props.userlist  : [];
+		const needle    = ("needle"    in props) ? props.needle    : null;
+		const truncated = ("truncated" in props) ? props.truncated : false;
 		
 		this.state = {
 			userlist: userlist,
@@ -57,19 +57,17 @@ class UserList extends React.Component
 		
 		query += "offset=" + encodeURIComponent(this.state.listsize);
 		
-		console.log(query);
-		
-		fetch("/api/search?" + query)
+		fetch("/api/search?" + query, {credentials: "same-origin"})
 			.then(function(response) {
 				return response.json();
+				
 			}).then(function(json) {
 				if (json["valid"] !== true || !("users" in json)) {
 					throw new Error("Invalid response: " + json);
 				}
 				
-				console.log(json);
-				
 				ulist.append(json["users"], json["truncated"]);
+				
 			}).catch(function(ex) {
 				console.log("Couldn't get extra user list");
 				console.log(ex);
@@ -93,16 +91,16 @@ class UserList extends React.Component
 		
 		if (this.state.truncated) {
 			return (
-			<span>
+			<ul id="userlist">
 				{namelist}
 				<li>
 				<a onClick={this.loadmore} id="truncated">Load more...</a>
 				</li>
-			</span>
+			</ul>
 			);
 		}
 		else {
-			return <span>{namelist}</span>;
+			return <ul id="userlist">{namelist}</ul>;
 		}
 	}
 }

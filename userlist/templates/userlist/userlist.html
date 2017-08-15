@@ -22,6 +22,7 @@
 		<input id="needle" name="needle" type="text" />
 		<input id="search" name="search" type="submit" value="Search" />
 	</form>
+	<div id="userlist_wrapper">
 	<ul id="userlist">
 {% for user in users %}
 		<li class="userlink"><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
@@ -30,8 +31,9 @@
 		<li id="truncated">Truncated list, you should search for a more specific user</li>
 {% endif %}
 	</ul>
+	</div>
 </section>
-<span id="details_wrapper">
+<div id="details_wrapper">
 {% if landing %}
 <section id="welcome">
 	<h2>Welcome to the Networking Directory</h2>
@@ -62,7 +64,7 @@
 	</div>
 </section>
 {% endif %}
-</span>
+</div>
 </section>
 </section>
 <footer>

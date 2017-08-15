@@ -6,6 +6,8 @@
 	<title>Tiny Yellow Pages</title>
 	<link rel="stylesheet" href="{% static 'userlist/style.css' %}?v=1.6" />
 	<link rel="icon" type="image/png" href="{% static 'userlist/favicon.png' %}" />
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -22,13 +24,14 @@
 	</form>
 	<ul id="userlist">
 {% for user in users %}
-		<li><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
+		<li class="userlink"><a href="{% url 'userlist' user.username %}">{{ user.fullname }}</a></li>
 {% endfor %}
 {% if truncated %}
 		<li id="truncated">Truncated list, you should search for a more specific user</li>
 {% endif %}
 	</ul>
 </section>
+<span id="details_wrapper">
 {% if landing %}
 <section id="welcome">
 	<h2>Welcome to the Networking Directory</h2>
@@ -42,27 +45,29 @@
 </section>
 {% else %}
 <section id="details">
-	<h2>{{ fullname }}</h2>
+	<h2 id="fullname">{{ fullname }}</h2>
 	<div class="infotable">
 		<div class="infoentry">
 			<p>Address:</p>
-			<p>{{ address | linebreaksbr }}</p>
+			<p id="address">{{ address | linebreaksbr }}</p>
 		</div>
 		<div class="infoentry">
 			<p>Phone Number:</p>
-			<p>{{ phone }}</p>
+			<p id="phone">{{ phone }}</p>
 		</div>
 		<div class="infoentry">
 			<p>E-mail:</p>
-			<p>{{ email }}</p>
+			<p id="email">{{ email }}</p>
 		</div>
 	</div>
 </section>
 {% endif %}
+</span>
 </section>
 </section>
 <footer>
 	<p>by Angelo Falchetti</p>
+    <script src="{% static 'userlist/app-bundle.js' %}" type="text/javascript"></script>
 </footer>
 </body>
 </html>

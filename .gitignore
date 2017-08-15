@@ -5,7 +5,10 @@ media/*
 static/*
 ssl/*
 db/*
-*/assets/*
+assets
+node_modules
+package-lock.json
+app-bundle.js
 
 nginx.conf
 start.sh

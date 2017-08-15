@@ -65,7 +65,7 @@ img:-moz-broken
 	display: table;
 	text-align: left;
 	box-sizing: border-box;
-	padding: 0:
+	padding: 0;
 	width: 100%;
 }
 
@@ -78,7 +78,8 @@ img:-moz-broken
 	background: rgba(255, 255, 255, 0.5);
 	padding: 2em;
 	vertical-align: top;
-	text-align: left;
+	text-align: center;
+	width: 30%;
 	min-width: 13em;
 	border-right: solid thin rgba(255, 255, 255, 0.6);
 	box-sizing: border-box;
@@ -93,9 +94,12 @@ img:-moz-broken
 }
 
 #userlist {
+	display: inline-block;
 	padding: 0;
 	margin: 0.3em;
 	max-height: 20em;
+	max-width: 18em;
+	text-align: left;
 	overflow-y: auto;
 	box-sizing: border-box;
 }
@@ -104,13 +108,19 @@ img:-moz-broken
 	color: rgb(210, 40, 44);
 }
 
-#welcome, #details, #notfound {
+#details_wrapper {
 	display: table-cell;
 	padding: 2em;
 	vertical-align: top;
 	text-align: center;
-	width: 100%;
+	width: 70%;
 	box-sizing: border-box;
+}
+
+#welcome, #details, #notfound {
+	margin: 0;
+	padding: 0;
+	/width: 100%;
 }
 
 @media (max-width: 650px) {
@@ -131,7 +141,7 @@ img:-moz-broken
 		order: 2;
 	}
 	
-	#welcome, #details, #notfound {
+	#details_wrapper {
 		display: block;
 		width: 100%;
 		padding: 0.2em;
